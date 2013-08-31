@@ -1,0 +1,8 @@
+{% extends 'shopping_cart/base.html' %}
+{% block content %}
+{% for s in stores %}
+<form class='store_choice'>
+<input type='hidden' value='{{ s.name }}' name='store_name'>
+<input type='submit' value='{{ s.name }}' name='{{ s.name }}_submit' class='store_choice_button'>
+</form>
+{% endblock %}

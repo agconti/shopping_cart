@@ -30,8 +30,18 @@ class Item(models.Model):
 		return "Item: %s: Sold by %s" %(self.name, self.store.name)
 
 class Order(models.Model):
+	shipping_choices = [
+					('ground', 'Ground'),
+					('snail', 'Snail'),
+					('owl', 'Owl'),
+					('teleporter', 'Teleporter'),
+					('pony_express', 'Pony Express'),
+				]		
+	shipping = models.CharField(max_length=200,
+								choices=shipping_choices,
+                                default='ground')
 	item = models.OneToOneField(Item)
-	quantity = quantity = models.IntegerField(validators=[MinValueValidator(0)])
+	quantity = models.IntegerField(validators=[MinValueValidator(0)])
 	buyer = models.OneToOneField(User)
 	date_ordered = models.DateTimeField(auto_now_add=True)
 

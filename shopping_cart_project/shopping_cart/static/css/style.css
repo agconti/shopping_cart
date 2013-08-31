@@ -1,0 +1,17 @@
+/* shopping cart app CSS */
+
+#navi { 
+		border-bottom: 2px solid black; 
+		width: 100%; 
+		position: fixed; 
+		z-index: 9999;
+		padding-top: 9px;
+		margin-top: 0;
+		background: white;
+		top: -4px;
+}
+#navi_elements { margin-left: 15%; vertical-align: bottom;}
+#navi_elements ul	{list-style: none; margin-bottom: 3px; margin-top: 0; padding-left: 0px;}
+.navi_icon { display: inline-block; padding-right: 10px;}
+.navi_icon img  { height: 35px;}
+#spacer {height: 41px;}

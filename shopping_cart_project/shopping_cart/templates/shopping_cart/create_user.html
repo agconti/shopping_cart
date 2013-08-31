@@ -1,0 +1,11 @@
+{% extends "shopping_cart/base.html" %}
+{% block content %}
+<h2>Create an Account!</h2>	
+<form enctype="multipart/form-data" method="POST" action="">
+	{% csrf_token %}
+	<table>
+		{{ form.as_table }}
+	</table>
+ 	<input id="upload_submit" type="submit" value="Register!">
+</form>
+{% endblock %}
