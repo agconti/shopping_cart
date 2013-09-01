@@ -64,6 +64,10 @@ def add_to_cart(request):
 				'name': name, 
 				'price': price
 				})
+			# needed to save the session since we are
+			# not modifying the session, but rather the
+			# cart so it does not save.
+			request.session.modified = True
 		except:
 			print "cart exception"
 			request.session['cart'] = []
@@ -73,6 +77,7 @@ def add_to_cart(request):
 				'name': name, 
 				'price': price
 				})
+			request.session.modified = True
 		print request.session['cart']
 		i = Item.objects.get(pk=item_id)
 		return store_homepage(request, i.store.id, ordered=True)

@@ -126,6 +126,7 @@ INSTALLED_APPS = (
     # 'django.contrib.admindocs',
     'shopping_cart',
     'django_extensions',
+    
 )
 
 # A sample logging configuration. The only tangible logging

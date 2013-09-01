@@ -13,7 +13,11 @@
           {% else %}
           <li class="navi_icon"><a href="{% url 'django.contrib.auth.views.login' %}"><img src="{{ STATIC_URL }}imgs/login.png"></a></li>
           {% endif %}
-          <li class="navi_icon"><a href="{% url 'view_cart' %}"><img src="{{ STATIC_URL }}imgs/cart.png"></a></li>
+          <li class="navi_icon">
+            <form method="GET" action="{% url 'view_cart' %}?next=request.path">
+              <input type='image' src="{{ STATIC_URL }}imgs/cart.png" style="height: 35px;">
+            </form>
+          </li>
           </ul>
         </div>
     </div>
