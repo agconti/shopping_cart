@@ -16,10 +16,12 @@ def home(request):
 	return render(request, 'shopping_cart/select_store.html', {'stores': stores})
 
 @login_required
-def store_homepage(request, store_id):
+def store_homepage(request, store_id, ordered=False):
+	print "storehome"
+	print request.session['cart']
 	s = get_object_or_404(Store, pk=store_id) 
 	Items = Item.objects.all().filter(store=s)
-	return render(request, "shopping_cart/store_homepage.html", {'Items':Items})
+	return render(request, "shopping_cart/store_homepage.html", {'Items':Items, 'ordered':ordered})
 
 
 ##### Handel login / logout #######
@@ -73,8 +75,12 @@ def add_to_cart(request):
 				})
 		print request.session['cart']
 		i = Item.objects.get(pk=item_id)
-		return store_homepage(request, i.store.id)
+		return store_homepage(request, i.store.id, ordered=True)
 
 def view_cart(request):
 	print request.session['cart']
 	return render(request, "shopping_cart/cart.html", {'cart_items':request.session['cart']})
+
+def previous_orders(request):
+	p_orders = Orders.objects.all().filter(buyer=request.user).order_by(reverse=True)
+	return render(request, "shopping_cart/previous_orders.html", {'p_orders':p_orders})
