@@ -1,4 +1,4 @@
-{% extends "shopping_cart/home.html" %}
+{% extends "shopping_cart/base.html" %}
 
 {% block content %}
 <p>Please login:</p>
@@ -17,7 +17,6 @@
     <td>{{ form.password }}</td>
 </tr>
 </table>
-
 <input type="submit" value="Login" /><a id='register' href="{% url 'create_user' %}">Not Registered? Click here!</a>
 <input type="hidden" name="next" value="{% url 'home' %}" />
 </form>

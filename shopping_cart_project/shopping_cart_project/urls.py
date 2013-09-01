@@ -6,7 +6,7 @@ admin.autodiscover()
 
 urlpatterns = patterns('',
     # Examples:
-    url(r'^$', include('shopping_cart.urls')),
+    url(r'^', include('shopping_cart.urls')),
     # url(r'^shopping_cart_project/', include('shopping_cart_project.foo.urls')),
 
     # Uncomment the admin/doc line below to enable admin documentation:
