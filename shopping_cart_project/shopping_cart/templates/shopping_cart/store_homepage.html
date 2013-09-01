@@ -1,17 +1,31 @@
 {% extends 'shopping_cart/base.html' %}
 {% block content %}
-<h1>{{ i.store.name }}</h1>
-<table>
+
+{% with Items|first as s %}
+<h1 id="store_name">{{ s.store.name|title }}</h1>
+{% endwith %}
+
+
 {% for i in Items %}
+	<h3>{{ i.name }}</h3>
+	<table class="item_table">
 	<tr>
-		<td>{{ i.name }}</td><td>{{ i.description }}</td><td>{{ i.price }}</td><td>{{ i.quantity }}</td>
+	<th>Description</th><th>Price</th><th>In Stock?</th>
+	</tr>
+	<tr>
+		<td align="left">{{ i.description }}</td><td>${{ i.price|floatformat }}</td><td> {{ i.in_stock|yesno:"Yes, Out Of stock" }}</td>
 		<td>
-			<form>
-				<input type='hidden' value='{{ i.id }}'>
+			<form method='POST' action='{% url "add_to_cart" %}'>
+				{% csrf_token %}
+				<input type="hidden" value='{{ i.id }}' name='item_id'>
+				<input type="hidden" value='{{ i.name }}' name='item_name'>
+				<input type="hidden" value='{{ i.price }}' name='item_price'>
+				<input type="number" name="quantity" min="1" max="{{ i.quantity }}">
 				<input type='submit' value='Buy Now!' class='buy_button'>
 			</form>
 		</td>
 	</tr>
+	</table>
 {% endfor %}
-</table>
+
 {% endblock %}

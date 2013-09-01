@@ -13,11 +13,11 @@
           {% else %}
           <li class="navi_icon"><a href="{% url 'django.contrib.auth.views.login' %}"><img src="{{ STATIC_URL }}imgs/login.png"></a></li>
           {% endif %}
-          <li class="navi_icon"><img src="{{ STATIC_URL }}imgs/cart.png"></li>
+          <li class="navi_icon"><a href="{% url 'view_cart' %}"><img src="{{ STATIC_URL }}imgs/cart.png"></a></li>
           </ul>
         </div>
     </div>
-    <div id='spacer'></div>
-{% block content %}{% endblock %}
+  <div id='spacer'></div>
+  <div id='content_div'>{% block content %}{% endblock %}</div>
 </body>
 </html>

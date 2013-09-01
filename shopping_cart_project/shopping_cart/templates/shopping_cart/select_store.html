@@ -1,8 +1,13 @@
 {% extends 'shopping_cart/base.html' %}
 {% block content %}
-{% for s in stores %}
-<form class='store_choice'>
-<input type='hidden' value='{{ s.name }}' name='store_name'>
-<input type='submit' value='{{ s.name }}' name='{{ s.name }}_submit' class='store_choice_button'>
-</form>
+<ul id="store_list">
+	<li >Choose A Store:</li>
+	{% for s in stores %}
+	<li>
+		<form class='store_choice' action='{% url "store_homepage" s.id %}'>
+			<input type='submit' value='{{ s.name }}' class='store_choice_button'>
+		</form>
+	</li>
+	{% endfor %}
+</ul>
 {% endblock %}

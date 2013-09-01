@@ -1,5 +1,5 @@
 # Create your views here.
-from django.shortcuts import get_object_or_404, render, render_to_response
+from django.shortcuts import get_object_or_404, render, render_to_response, redirect
 from django.http import HttpResponseRedirect, HttpResponse
 from django.core.urlresolvers import reverse
 from django.contrib.auth.decorators import permission_required, login_required
@@ -9,9 +9,17 @@ from django.contrib.auth.models import User, Permission
 
 from shopping_cart.models import Store, Item
 
+#### Stores ##########
 @login_required
 def home(request):
-	return render(request, 'shopping_cart/base.html')
+	stores = Store.objects.all()
+	return render(request, 'shopping_cart/select_store.html', {'stores': stores})
+
+@login_required
+def store_homepage(request, store_id):
+	s = get_object_or_404(Store, pk=store_id) 
+	Items = Item.objects.all().filter(store=s)
+	return render(request, "shopping_cart/store_homepage.html", {'Items':Items})
 
 
 ##### Handel login / logout #######
@@ -37,3 +45,36 @@ def create_user(request):
 	else:
 		form = UserCreationForm()
 	return render(request, 'shopping_cart/create_user.html', {'form': form})
+
+### shopping_cart ###
+@login_required
+def add_to_cart(request):
+	print request
+	if request.method == "POST":
+		item_id = request.POST.get('item_id')
+		name = request.POST.get('item_name')
+		price = request.POST.get('item_price')
+		quantity = request.POST.get('quantity')
+		try:
+			request.session['cart'].append({
+				'item_id': item_id, 
+				'quantity': quantity, 
+				'name': name, 
+				'price': price
+				})
+		except:
+			print "cart exception"
+			request.session['cart'] = []
+			request.session['cart'].append({
+				'item_id': item_id, 
+				'quantity': quantity, 
+				'name': name, 
+				'price': price
+				})
+		print request.session['cart']
+		i = Item.objects.get(pk=item_id)
+		return store_homepage(request, i.store.id)
+
+def view_cart(request):
+	print request.session['cart']
+	return render(request, "shopping_cart/cart.html", {'cart_items':request.session['cart']})

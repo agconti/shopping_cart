@@ -1,0 +1,20 @@
+{% extends 'shopping_cart/base.html' %}
+{% block content %}
+<h1>Hi {{ request.user.username }}!</h1>
+<h1>Your Cart:</h1>
+<table id="cart_table">
+	<tr>
+		<th>Items In Cart </th><a href="">View Past Orders</a>
+	</tr>
+	<tr>
+		<th>Item</th><th>Price</th><th>Quantity</th>
+	</tr>
+	{% for i in cart_items %}
+	
+	<tr>
+		<td align="left">{{ i.name }}</td><td>${{ i.price|floatformat }}</td><td> {{ i.quantity }}</td>
+	</tr>
+	{% endfor %}
+</table>
+<a href="">Checkout?</a> - OR - <a href="">Continue Shopping</a>
+{% endblock %}
