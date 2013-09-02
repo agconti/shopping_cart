@@ -7,7 +7,7 @@ from django.contrib.auth import logout, authenticate, login
 from django.contrib.auth.forms import UserCreationForm
 from django.contrib.auth.models import User, Permission
 
-from shopping_cart.models import Store, Item, Order
+from shopping_cart.models import Store, Item, Order, Transaction
 
 #### Stores ##########
 @login_required
@@ -17,8 +17,6 @@ def home(request):
 
 @login_required
 def store_homepage(request, store_id, ordered=False):
-	print "storehome"
-	print request.session['cart']
 	s = get_object_or_404(Store, pk=store_id) 
 	Items = Item.objects.all().filter(store=s)
 	return render(request, "shopping_cart/store_homepage.html", {'Items':Items, 'ordered':ordered})
@@ -83,8 +81,11 @@ def add_to_cart(request):
 		return store_homepage(request, i.store.id, ordered=True)
 
 def view_cart(request):
-	print request.session['cart']
-	return render(request, "shopping_cart/cart.html", {'cart_items':request.session['cart']})
+	if request.method == "GET":
+		if request.session.get('cart', default=None) != None:
+			return render(request, "shopping_cart/cart.html", {'cart_items':request.session['cart']})
+		else:
+			return render(request, "shopping_cart/empty_cart.html")
 
 def checkout(request):
 	if request.method == "GET":
@@ -92,13 +93,21 @@ def checkout(request):
 		o = Order.objects.create(buyer=request.user)
 		# add items to order
 		for i in request.session['cart']:
-			Transaction(order = o , item=i['item_id'], quantity=i['quantity'])
+			Transaction.objects.create(
+				order = o, 
+				item=Item.objects.get(pk=i['item_id']), 
+				quantity=i['quantity']
+				)
 		# empty cart
 		del request.session['cart']
-		return render(request, "order_processed.html", {'order': o})
+		return render(request, "shopping_cart/order_processed.html", {'order': o})
 
 
 
 def previous_orders(request):
 	p_orders = Order.objects.all().filter(buyer=request.user).reverse()
+	# print p_orders
+	# for o in p_orders:
+	# 	for i in o.transaction_set.all():
+	# 		print i.name
 	return render(request, "shopping_cart/previous_orders.html", {'p_orders':p_orders})
