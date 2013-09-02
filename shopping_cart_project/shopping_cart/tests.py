@@ -32,28 +32,6 @@ class Home_ViewTest(TestCase):
 	def tearDown(self):
 		self.test_user.delete()
 
-# class store_homepage_ViewTest(TestCase):
-# 	def setUp(self):
-# 		login_test_user(self)
-
-# 	def test_details(self):
-
-# 		#create store
-# 		s = Store.objects.create(name="test_store", bio="Stuff", owner=self.test_user)
-# 		Item.objects.create(store=s, name='Hook Hand', price=50, quantity=1)
-# 		response = self.client.post('store_homepage/1/')
-# 		print response.context
-# 		# Check that the response is 200 OK.
-# 		self.assertEqual(response.status_code, 200)
-
-# 		# Check that the rendered context is not none 
-# 		self.assertTrue(response.context['ordered'] != None)
-# 		self.assertTrue(response.context['Items'] != None)  
-
-	def tearDown(self):
-		print "tear down"
-		self.test_user.delete()
-
 class logout_view_ViewTest(TestCase):
     def setUp(self):
         self.client = Client()

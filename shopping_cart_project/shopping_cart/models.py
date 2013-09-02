@@ -61,7 +61,7 @@ class Order(models.Model):
 class Transaction(models.Model):
 	order = models.ForeignKey(Order)
 	item = models.ForeignKey(Item)
-	# Min value is set to 1 to make sure some one actaully orders an item 
+	# Min value is set to 1 to make sure some one actually orders an item 
 	quantity = models.IntegerField(validators=[MinValueValidator(1)])
 
 	def __unicode__(self):
