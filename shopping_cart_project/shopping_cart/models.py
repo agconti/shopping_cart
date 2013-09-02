@@ -48,7 +48,7 @@ class Order(models.Model):
 	shipping = models.CharField(max_length=200,
 								choices=shipping_choices,
                                 default='ground')
-	buyer = models.OneToOneField(User)
+	buyer = models.ForeignKey(User)
 	date_ordered = models.DateTimeField(auto_now_add=True)
 
 	def __unicode__(self):

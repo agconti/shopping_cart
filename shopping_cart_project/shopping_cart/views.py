@@ -87,7 +87,17 @@ def view_cart(request):
 	return render(request, "shopping_cart/cart.html", {'cart_items':request.session['cart']})
 
 def checkout(request):
-	request.session['cart']
+	if request.method == "GET":
+		# Create order first
+		o = Order.objects.create(buyer=request.user)
+		# add items to order
+		for i in request.session['cart']:
+			Transaction(order = o , item=i['item_id'], quantity=i['quantity'])
+		# empty cart
+		del request.session['cart']
+		return render(request, "order_processed.html", {'order': o})
+
+
 
 def previous_orders(request):
 	p_orders = Order.objects.all().filter(buyer=request.user).reverse()
