@@ -12,4 +12,3 @@ urlpatterns = patterns('',
     url(r'^checkout/', views.checkout, name='checkout'),
 
 )
-#(?P<item_id>\d+)/(?P<name>[a-z]+)/(?P<price>\d+)/$

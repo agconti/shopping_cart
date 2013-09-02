@@ -49,7 +49,6 @@ def create_user(request):
 ### shopping_cart ###
 @login_required
 def add_to_cart(request):
-	print request
 	if request.method == "POST":
 		item_id = request.POST.get('item_id')
 		name = request.POST.get('item_name')
@@ -67,7 +66,6 @@ def add_to_cart(request):
 			# cart so it does not save.
 			request.session.modified = True
 		except:
-			print "cart exception"
 			request.session['cart'] = []
 			request.session['cart'].append({
 				'item_id': item_id, 
@@ -76,7 +74,6 @@ def add_to_cart(request):
 				'price': price
 				})
 			request.session.modified = True
-		print request.session['cart']
 		i = Item.objects.get(pk=item_id)
 		return store_homepage(request, i.store.id, ordered=True)
 
@@ -106,8 +103,4 @@ def checkout(request):
 
 def previous_orders(request):
 	p_orders = Order.objects.all().filter(buyer=request.user).reverse()
-	# print p_orders
-	# for o in p_orders:
-	# 	for i in o.transaction_set.all():
-	# 		print i.name
 	return render(request, "shopping_cart/previous_orders.html", {'p_orders':p_orders})
