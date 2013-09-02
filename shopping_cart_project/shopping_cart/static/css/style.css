@@ -16,7 +16,7 @@
 .navi_icon 			{ display: inline-block; padding-right: 10px;}
 .navi_icon img  	{ height: 35px;}
 #spacer 			{ height: 41px;}
-#content_div		{ margin-left: 15%;}
+#content_div		{ margin-left: 15%; margin-right: 15%; margin-top: 45px;}
 #store_list			{ 
 						list-style: none;
 						text-align: center;

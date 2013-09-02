@@ -6,6 +6,9 @@ from shopping_cart.models import Store, Order, Item, Transaction
 from django.contrib.auth.models import User
 
 def login_test_user(self):
+	'''
+	Create a test user and log him in.
+	'''
 	self.client = Client()
 	self.username = 'test_user'
 	self.email = 'test@test.com'

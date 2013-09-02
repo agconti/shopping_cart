@@ -19,6 +19,9 @@ def home(request):
 def store_homepage(request, store_id, ordered=False):
 	s = get_object_or_404(Store, pk=store_id) 
 	Items = Item.objects.all().filter(store=s)
+	request.subdomain = s.name.replace(" ", "_")
+	print request
+	print request.subdomain
 	return render(request, "shopping_cart/store_homepage.html", {'Items':Items, 'ordered':ordered})
 
 
@@ -31,7 +34,7 @@ def create_user(request):
 	create and login user
 	'''
 	if request.method == 'POST':
-		form = UserCreationForm(request.POST)
+		form = UserCreationForm(request.POST)	
 		if form.is_valid():
 			username = form.cleaned_data.get('username')
 			password = form.cleaned_data.get('password2')
@@ -55,17 +58,19 @@ def add_to_cart(request):
 		price = request.POST.get('item_price')
 		quantity = request.POST.get('quantity')
 		try:
+			# add an item to the cart if there is a cart
 			request.session['cart'].append({
 				'item_id': item_id, 
 				'quantity': quantity, 
 				'name': name, 
 				'price': price
 				})
-			# needed to save the session since we are
-			# not modifying the session, but rather the
-			# cart so it does not save.
+			# This is needed to save the session since 
+			# we are not modifying the session, but 
+			# rather the item in the session dict. 
 			request.session.modified = True
 		except:
+			# create an empty cart
 			request.session['cart'] = []
 			request.session['cart'].append({
 				'item_id': item_id, 
@@ -80,7 +85,7 @@ def add_to_cart(request):
 def view_cart(request):
 	if request.method == "GET":
 		if request.session.get('cart', default=None) != None:
-			return render(request, "shopping_cart/cart.html", {'cart_items':request.session['cart']})
+			return render(request, "shopping_cart/cart.html", {'cart_items': request.session['cart']})
 		else:
 			return render(request, "shopping_cart/empty_cart.html")
 
