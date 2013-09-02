@@ -1,6 +1,6 @@
 #admin.py
 from django.contrib import admin
-from shopping_cart.models import Store, Item, Order
+from shopping_cart.models import Store, Item, Order, Transaction
 from django.contrib.admin import SimpleListFilter
 from django.utils.translation import ugettext_lazy as _
 
@@ -31,6 +31,11 @@ class ItemAdmin(admin.ModelAdmin):
 		qs = super(ItemAdmin, self).queryset(request)
 		return qs.filter(store__owner=request.user)
 
+class OrderAdmin(admin.ModelAdmin):
+	list_display = ()
+	search_fields = ['name', 'price', 'quantity', 'store__name']
+	list_filter = ('store__name','store__owner', 'date_added')
 admin.site.register(Store, StoreAdmin)
 admin.site.register(Item, ItemAdmin)
 admin.site.register(Order)
+admin.site.register(Transaction)

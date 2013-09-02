@@ -9,6 +9,7 @@ urlpatterns = patterns('',
     url(r'^add_to_cart/', views.add_to_cart, name='add_to_cart'),
     url(r'^view_cart/', views.view_cart, name='view_cart'),
     url(r'^previous_orders/', views.previous_orders, name='previous_orders'),
+    url(r'^checkout/', views.checkout, name='checkout'),
 
 )
 #(?P<item_id>\d+)/(?P<name>[a-z]+)/(?P<price>\d+)/$

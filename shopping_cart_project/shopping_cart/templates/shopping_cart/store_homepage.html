@@ -3,6 +3,8 @@
 
 {% with Items|first as s %}
 <h1 id="store_name">{{ s.store.name|title }}</h1>
+<h4>Description: {{ s.store.bio }}</h4>
+<h4>Items for Sale:</h4>
 {% endwith %}
 {% if ordered == True %}
 <h1>Sucessfully Added to Cart</h1>
@@ -15,7 +17,7 @@
 	<th>Description</th><th>Price</th><th>In Stock?</th>
 	</tr>
 	<tr>
-		<td align="left">{{ i.description }}</td><td>${{ i.price|floatformat }}</td><td> {{ i.in_stock|yesno:"Yes, Out Of stock" }}</td>
+		<td align="left">{{ i.description }}</td><td>${{ i.price|floatformat:2 }}</td><td> {{ i.in_stock|yesno:"Yes, Out Of stock" }}</td>
 		<td>
 			<form method='POST' action='{% url "add_to_cart" %}'>
 				{% csrf_token %}

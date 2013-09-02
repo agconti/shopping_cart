@@ -48,8 +48,6 @@ class Order(models.Model):
 	shipping = models.CharField(max_length=200,
 								choices=shipping_choices,
                                 default='ground')
-	item = models.ForeignKey(Item)
-	quantity = models.IntegerField(validators=[MinValueValidator(0)])
 	buyer = models.OneToOneField(User)
 	date_ordered = models.DateTimeField(auto_now_add=True)
 
@@ -58,5 +56,16 @@ class Order(models.Model):
 		for human readable model representation 
 		'''
 		return "Order by %s: on %s" %(self.buyer.username, self.date_ordered.ctime())
+
+class Transaction(models.Model):
+	order = models.ForeignKey(Order)
+	item = models.ForeignKey(Item)
+	quantity = models.IntegerField(validators=[MinValueValidator(1)])
+
+	def __unicode__(self):
+		'''
+		for human readable model representation 
+		'''
+		return "Order %s: on %s" %(self.order, self.order.date_ordered.ctime())
 
 

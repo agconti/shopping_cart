@@ -16,7 +16,7 @@ urlpatterns = patterns('',
     url(r'^admin/', include(admin.site.urls)),
     url(r'^accounts/login/$', 'django.contrib.auth.views.login', {'template_name': 'shopping_cart/login.html'}, name='login_view'),
     url(r'^accounts/logout/$', 'django.contrib.auth.views.logout',{'template_name': 'shopping_cart/base.html'}, name='logout_view'),
-    url(r'^view_cart/', 'shopping_cart.views.view_cart', name='view_cart'),
+    
 
 
 )

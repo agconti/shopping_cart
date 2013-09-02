@@ -7,7 +7,7 @@ from django.contrib.auth import logout, authenticate, login
 from django.contrib.auth.forms import UserCreationForm
 from django.contrib.auth.models import User, Permission
 
-from shopping_cart.models import Store, Item
+from shopping_cart.models import Store, Item, Order
 
 #### Stores ##########
 @login_required
@@ -86,6 +86,9 @@ def view_cart(request):
 	print request.session['cart']
 	return render(request, "shopping_cart/cart.html", {'cart_items':request.session['cart']})
 
+def checkout(request):
+	request.session['cart']
+
 def previous_orders(request):
-	p_orders = Orders.objects.all().filter(buyer=request.user).order_by(reverse=True)
+	p_orders = Order.objects.all().filter(buyer=request.user).reverse()
 	return render(request, "shopping_cart/previous_orders.html", {'p_orders':p_orders})

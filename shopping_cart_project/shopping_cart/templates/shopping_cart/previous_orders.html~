@@ -9,10 +9,12 @@
 	<tr>
 		<th>Item</th><th>Price</th><th>Quantity</th>
 	</tr>
-		
+	{% for i in o.item %}
+	
 	<tr>
-		<td align="left">{{ o.item.name }}</td><td>${{ o.item.price|floatformat }}</td><td> {{ o.item.quantity }}</td>
+		<td align="left">{{ i.name }}</td><td>${{ i.price|floatformat }}</td><td> {{ i.quantity }}</td>
 	</tr>
+	{% endfor %}
 </table>
 {% endfor %}
 {% endblock %}
