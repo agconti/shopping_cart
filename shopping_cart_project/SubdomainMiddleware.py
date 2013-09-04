@@ -2,18 +2,21 @@
 class SubdomainMiddleware:
     def process_request(self, request):
         """
-        Lets store subdomains be processed naturally 
-        by django url confs, by parsing the passed
-        url and adding it subdomain as a property of 
-        request. 
+        Lets subdomains be processed naturally 
+        by django url dispatcher, by parsing the passed
+        url's subdomain and then adding it as a property of 
+        the request. 
         
         Ex. guitar.store.mysite.com 
 
-        becomes mysite.com/store_hompage/Guitar_Store
-        so the store_hompage view can process it. 
+        stores the subdomain as "Guitar Store" in request.subdomain 
+        so it can be accessed later by the project views.
 
-        code referenced from:
+        This code is referenced from:
         http://thingsilearned.com/2009/01/05/using-subdomains-in-django/
+        I've customized it to suit my project needs, and while there are 
+        many resources on the Internet with almost identical methods of
+        doing this, I felt it was fair to give this blog poster credit.  
         """
         request.subdomain = None
         host = request.META.get('HTTP_HOST', '')
