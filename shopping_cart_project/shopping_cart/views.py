@@ -17,11 +17,13 @@ def home(request):
 
 @login_required
 def store_homepage(request, store_id, ordered=False):
-	s = get_object_or_404(Store, pk=store_id) 
-	Items = Item.objects.all().filter(store=s)
-	request.subdomain = s.name.replace(" ", "_")
-	print request
-	print request.subdomain
+	if not request.subdomain == "127 0" or not request.subdomain == "Www Myapp":
+		s = get_object_or_404(Store, pk=store_id) 
+		Items = Item.objects.all().filter(store=s)
+	else:
+		s = get_object_or_404(Store, name=request.subdomain) 
+		Items = Item.objects.all().filter(store=s)
+
 	return render(request, "shopping_cart/store_homepage.html", {'Items':Items, 'ordered':ordered})
 
 

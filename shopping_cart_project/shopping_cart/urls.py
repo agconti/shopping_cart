@@ -10,5 +10,6 @@ urlpatterns = patterns('',
     url(r'^view_cart/', views.view_cart, name='view_cart'),
     url(r'^previous_orders/', views.previous_orders, name='previous_orders'),
     url(r'^checkout/', views.checkout, name='checkout'),
-
+    #url(r'^groups/(?P<name>.+)/$', views.store_homepage, {}, name='group_detail'),
+#(?P<store_name>.+)
 )
