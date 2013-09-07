@@ -15,6 +15,8 @@
 	</tr>
 	{% endfor %}
 </table>
-<p>{{ item.recomend.name }}</p>
+{% for i in recommend %}
+<p>{{ i.name }}</p>
+{% endfor %}
 <a href="{% url 'checkout' %}">Checkout?</a>
 {% endblock %}

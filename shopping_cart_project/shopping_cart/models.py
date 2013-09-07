@@ -23,21 +23,6 @@ class Item(models.Model):
 	quantity = models.IntegerField(validators=[MinValueValidator(0)])
 	date_added = models.DateTimeField(auto_now_add=True)
 	
-	@property
-	def recomend(self):
-		'''
-		simple recommendation engine. 
-		'''
-		import numpy as np
-		items = Item.objects.values_list('id','price')
-		avg = Transaction.avg_transaction
-		ir = np.asarray(items) 
-		ir[:,1] = np.abs(ir[:,1] - avg_transaction)
-		ir[:,1].sort()
-		return ir[:5]
-
-
-	
 	def in_stock(self):
 		'''
 		Checks if an item is in stock.
@@ -85,16 +70,28 @@ class Transaction(models.Model):
 		go through a users orders and get their avg_transaction (item) price
 		'''
 		avg_transaction = 0 
-		avg_transaction = 0 
-		orders = Order.objects.filter(buyer=User.objects.get(pk=1))
-			for o in orders:
-				avg_purchase = 0
-				sum_purchase = 0
-				for t in o.transaction_set.all():
-					sum_purchase += t.item.price
-			avg_purchase = (sum_purchase / len(o.transaction_set.all()))
-			avg_transaction = ((avg_transaction + avg_purchase) / (2))
+		orders = Order.objects.filter(buyer=self.order.buyer)
+		for o in orders:
+			avg_purchase = 0
+			sum_purchase = 0
+			for t in o.transaction_set.all():
+				sum_purchase += t.item.price
+		avg_purchase = (sum_purchase / len(o.transaction_set.all()))
+		avg_transaction = ((avg_transaction + avg_purchase) / (2))
 		return	avg_transaction
+	
+	@property
+	def recommend(self):
+		'''
+		simple recommendation engine. 
+		'''
+		import numpy as np
+		items = Item.objects.values_list('id','price')
+		avg_t = self.avg_transaction
+		ir = np.asarray(items) 
+		ir[:,1] = np.abs(ir[:,1] - avg_t)
+		ir[:,1].sort()
+		return ir[:5]
 
 	def __unicode__(self):
 		'''

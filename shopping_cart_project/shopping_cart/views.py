@@ -88,12 +88,15 @@ def add_to_cart(request):
 
 def view_cart(request): 
 	if request.method == "GET":
-		# get an items object so we can exact recommendations for our cart.
-		item = Item.objects.get(pk=1)
+		recommendations = Item.recommend
+		print recommendations
 		if request.session.get('cart', default=None) != None:
-			return render(request, "shopping_cart/cart.html", {'cart_items': request.session['cart'], 'item':item})
+			return render(request, "shopping_cart/cart.html", {
+				'cart_items': request.session['cart'], 
+				'recommendations':recommendations
+				})
 		else:
-			return render(request, "shopping_cart/empty_cart.html")
+			return render(request, "shopping_cart/empty_cart.html", {'recommendations':recommendations})
 
 def checkout(request):
 	if request.method == "GET":
