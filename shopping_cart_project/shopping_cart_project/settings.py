@@ -129,7 +129,7 @@ INSTALLED_APPS = (
     
 )
 
-SESSION_COOKIE_DOMAIN = '.mysite.com'
+#SESSION_COOKIE_DOMAIN = '.mysite.com'
 
 # A sample logging configuration. The only tangible logging
 # performed by this configuration is to send an email to

@@ -24,14 +24,17 @@ class Item(models.Model):
 	date_added = models.DateTimeField(auto_now_add=True)
 	
 	@property
-	def recomend(self, transaction):
+	def recomend(self):
 		'''
 		simple recommendation engine. 
 		'''
-		items = Item.objects.values('id','price')
-		# find the product with the closest proximity to user spending habits
-		recomend_item = min(items, key=lambda k: (items[k] - transaction.avg_transaction))
-		return Item.objects.get(pk=recomend_item.items()[0][0])
+		import numpy as np
+		items = Item.objects.values_list('id','price')
+		avg = Transaction.avg_transaction
+		ir = np.asarray(items) 
+		ir[:,1] = np.abs(ir[:,1] - avg_transaction)
+		ir[:,1].sort()
+		return ir[:5]
 
 
 	
@@ -44,7 +47,7 @@ class Item(models.Model):
 		else:
 			return	False
 
-		def __unicode__(self):
+	def __unicode__(self):
 		'''
 		for human readable model representation 
 		'''
@@ -82,19 +85,16 @@ class Transaction(models.Model):
 		go through a users orders and get their avg_transaction (item) price
 		'''
 		avg_transaction = 0 
-		user = self.order.buyer
-		orders = Order.objects.filter(buyer=user)
-		for i,o in enumerate(orders):
-			avg_purchase = 0
-			for t in o.transaction_set:
-				sum_purchase += t.item.price
-			avg_purchase = (sum__purchase / float(len(o.transaction_set)))
-			avg_transaction = ((avg_transaction + avg_purchase) / float(i))
-		return avg_transaction
-
-
-
-
+		avg_transaction = 0 
+		orders = Order.objects.filter(buyer=User.objects.get(pk=1))
+			for o in orders:
+				avg_purchase = 0
+				sum_purchase = 0
+				for t in o.transaction_set.all():
+					sum_purchase += t.item.price
+			avg_purchase = (sum_purchase / len(o.transaction_set.all()))
+			avg_transaction = ((avg_transaction + avg_purchase) / (2))
+		return	avg_transaction
 
 	def __unicode__(self):
 		'''

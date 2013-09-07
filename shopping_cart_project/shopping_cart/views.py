@@ -86,10 +86,12 @@ def add_to_cart(request):
 		i = Item.objects.get(pk=item_id)
 		return store_homepage(request, i.store.id, ordered=True)
 
-def view_cart(request):
+def view_cart(request): 
 	if request.method == "GET":
+		# get an items object so we can exact recommendations for our cart.
+		item = Item.objects.get(pk=1)
 		if request.session.get('cart', default=None) != None:
-			return render(request, "shopping_cart/cart.html", {'cart_items': request.session['cart']})
+			return render(request, "shopping_cart/cart.html", {'cart_items': request.session['cart'], 'item':item})
 		else:
 			return render(request, "shopping_cart/empty_cart.html")
 
