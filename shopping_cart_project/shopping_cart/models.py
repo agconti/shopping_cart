@@ -23,11 +23,17 @@ class Item(models.Model):
 	quantity = models.IntegerField(validators=[MinValueValidator(0)])
 	date_added = models.DateTimeField(auto_now_add=True)
 	
-	def __unicode__(self):
+	@property
+	def recomend(self, transaction):
 		'''
-		for human readable model representation 
+		simple recommendation engine. 
 		'''
-		return "Item: %s: Sold by %s" %(self.name, self.store.name)
+		items = Item.objects.values('id','price')
+		# find the product with the closest proximity to user spending habits
+		recomend_item = min(items, key=lambda k: (items[k] - transaction.avg_transaction))
+		return Item.objects.get(pk=recomend_item.items()[0][0])
+
+
 	
 	def in_stock(self):
 		'''
@@ -37,6 +43,12 @@ class Item(models.Model):
 			return True
 		else:
 			return	False
+
+		def __unicode__(self):
+		'''
+		for human readable model representation 
+		'''
+		return "Item: %s: Sold by %s" %(self.name, self.store.name)
 
 class Order(models.Model):
 	shipping_choices = [
@@ -63,6 +75,26 @@ class Transaction(models.Model):
 	item = models.ForeignKey(Item)
 	# Min value is set to 1 to make sure some one actually orders an item 
 	quantity = models.IntegerField(validators=[MinValueValidator(1)])
+
+	@property 
+	def avg_transaction(self):
+		'''
+		go through a users orders and get their avg_transaction (item) price
+		'''
+		avg_transaction = 0 
+		user = self.order.buyer
+		orders = Order.objects.filter(buyer=user)
+		for i,o in enumerate(orders):
+			avg_purchase = 0
+			for t in o.transaction_set:
+				sum_purchase += t.item.price
+			avg_purchase = (sum__purchase / float(len(o.transaction_set)))
+			avg_transaction = ((avg_transaction + avg_purchase) / float(i))
+		return avg_transaction
+
+
+
+
 
 	def __unicode__(self):
 		'''
