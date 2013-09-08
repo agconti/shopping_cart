@@ -54,42 +54,53 @@ def create_user(request):
 	return render(request, 'shopping_cart/create_user.html', {'form': form})
 
 ### shopping_cart ###
+def add_item(request):
+	item_id = request.POST.get('item_id')
+	name = request.POST.get('item_name')
+	price = request.POST.get('item_price')
+	quantity = request.POST.get('quantity')
+	try:
+		# add an item to the cart if there is a cart
+		request.session['cart'].append({
+			'item_id': item_id, 
+			'quantity': quantity, 
+			'name': name, 
+			'price': price
+			})
+		# This is needed to save the session since 
+		# we are not modifying the session, but 
+		# rather the item in the session dict. 
+		request.session.modified = True
+	except:
+		# create an empty cart
+		request.session['cart'] = []
+		request.session['cart'].append({
+			'item_id': item_id, 
+			'quantity': quantity, 
+			'name': name, 
+			'price': price
+			})
+		request.session.modified = True
+	return item_id
+	
+
 @login_required
 def add_to_cart(request):
 	if request.method == "POST":
-		item_id = request.POST.get('item_id')
-		name = request.POST.get('item_name')
-		price = request.POST.get('item_price')
-		quantity = request.POST.get('quantity')
-		try:
-			# add an item to the cart if there is a cart
-			request.session['cart'].append({
-				'item_id': item_id, 
-				'quantity': quantity, 
-				'name': name, 
-				'price': price
-				})
-			# This is needed to save the session since 
-			# we are not modifying the session, but 
-			# rather the item in the session dict. 
-			request.session.modified = True
-		except:
-			# create an empty cart
-			request.session['cart'] = []
-			request.session['cart'].append({
-				'item_id': item_id, 
-				'quantity': quantity, 
-				'name': name, 
-				'price': price
-				})
-			request.session.modified = True
+		item_id = add_item(request)
 		i = Item.objects.get(pk=item_id)
 		return store_homepage(request, i.store.id, ordered=True)
 
+@login_required
+def inline_add_to_cart(request):
+	if request.method == "POST":
+		add_item(request)
+		return view_cart(request)
+
+@login_required
 def view_cart(request): 
 	if request.method == "GET":
-		recommendations = Item.recommend
-		print recommendations
+		recommendations = Transaction.objects.filter(order=Order.objects.filter(buyer=request.user)[0])[0].recommend
 		if request.session.get('cart', default=None) != None:
 			return render(request, "shopping_cart/cart.html", {
 				'cart_items': request.session['cart'], 

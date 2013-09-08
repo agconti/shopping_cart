@@ -88,10 +88,15 @@ class Transaction(models.Model):
 		import numpy as np
 		items = Item.objects.values_list('id','price')
 		avg_t = self.avg_transaction
+		# compute item recommendations (ir)
 		ir = np.asarray(items) 
 		ir[:,1] = np.abs(ir[:,1] - avg_t)
+		# limit results to top 5
+		ir = ir[:5,:]
+		for i,val in enumerate(ir[:,0]):
+			ir[i,0] = Item.objects.get(pk=val)
 		ir[:,1].sort()
-		return ir[:5]
+		return ir[:,0]
 
 	def __unicode__(self):
 		'''

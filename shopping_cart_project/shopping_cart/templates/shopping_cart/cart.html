@@ -15,8 +15,27 @@
 	</tr>
 	{% endfor %}
 </table>
-{% for i in recommend %}
-<p>{{ i.name }}</p>
+{% for i in recommendations %}
+<h1>Recommended for you:</h1>
+<h3>{{ i.name }}</h3>
+<table class="item_table">
+<tr>
+<th>Description</th><th>Price</th><th>In Stock?</th>
+</tr>
+<tr>
+	<td align="left">{{ i.description }}</td><td>${{ i.price|floatformat:2 }}</td><td> {{ i.in_stock|yesno:"Yes, Out Of stock" }}</td>
+	<td>
+		<form method='POST' action='{% url "inline_add_to_cart" %}'>
+			{% csrf_token %}
+			<input type="hidden" value='{{ i.id }}' name='item_id'>
+			<input type="hidden" value='{{ i.name }}' name='item_name'>
+			<input type="hidden" value='{{ i.price }}' name='item_price'>
+			<input type="number" name="quantity" min="1" max="{{ i.quantity }}">
+			<input type='submit' value='Buy Now!' class='buy_button'>
+		</form>
+	</td>
+</tr>
+</table>
 {% endfor %}
 <a href="{% url 'checkout' %}">Checkout?</a>
 {% endblock %}
