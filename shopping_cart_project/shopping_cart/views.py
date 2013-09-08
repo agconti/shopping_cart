@@ -99,15 +99,14 @@ def inline_add_to_cart(request):
 
 @login_required
 def view_cart(request): 
-	if request.method == "GET":
-		recommendations = Transaction.objects.filter(order=Order.objects.filter(buyer=request.user)[0])[0].recommend
-		if request.session.get('cart', default=None) != None:
-			return render(request, "shopping_cart/cart.html", {
-				'cart_items': request.session['cart'], 
-				'recommendations':recommendations
-				})
-		else:
-			return render(request, "shopping_cart/empty_cart.html", {'recommendations':recommendations})
+	recommendations = Transaction.objects.filter(order=Order.objects.filter(buyer=request.user)[0])[0].recommend
+	if request.session.get('cart', default=None) != None:
+		return render(request, "shopping_cart/cart.html", {
+			'cart_items': request.session['cart'], 
+			'recommendations':recommendations
+			})
+	else:
+		return render(request, "shopping_cart/empty_cart.html", {'recommendations':recommendations})
 
 def checkout(request):
 	if request.method == "GET":
