@@ -24,6 +24,11 @@
   			<input type="hidden" value='{{ i.name }}' name='item_name'>
   			<input type="hidden" value='{{ i.price }}' name='item_price'>
   			<input type="number" name="quantity" min="1" max="{{ i.quantity }}">
+        <select name='shipping_choices'>
+          {% for machine, human in shipping_choices %}
+          <option value="{{ machine }}">{{ human }}</option>
+          {% endfor %}
+        </select>
   			<input type='submit' value='Buy Now!' class='buy_button'>
   		</form>
   	</td>

@@ -25,8 +25,12 @@ def store_homepage(request, store_id, ordered=False):
 	except:
 		s = get_object_or_404(Store, pk=store_id) 
 		Items = Item.objects.all().filter(store=s)
-
-	return render(request, "shopping_cart/store_homepage.html", {'Items':Items, 'ordered':ordered})
+	shipping_choices = Order.shipping_choices
+	return render(request, "shopping_cart/store_homepage.html", {
+		'Items':Items, 
+		'ordered':ordered, 
+		'shipping_choices':shipping_choices
+		})
 
 
 ##### Handel login / logout #######
@@ -100,13 +104,15 @@ def inline_add_to_cart(request):
 @login_required
 def view_cart(request): 
 	recommendations = Transaction.objects.filter(order=Order.objects.filter(buyer=request.user)[0])[0].recommend
+	shipping_choices = Order.shipping_choices
 	if request.session.get('cart', default=None) != None:
 		return render(request, "shopping_cart/cart.html", {
 			'cart_items': request.session['cart'], 
-			'recommendations':recommendations
+			'recommendations':recommendations,
+			'shipping_choices':shipping_choices
 			})
 	else:
-		return render(request, "shopping_cart/empty_cart.html", {'recommendations':recommendations})
+		return render(request, "shopping_cart/empty_cart.html", {'recommendations':recommendations, 'shipping_choices':shipping_choices})
 
 def checkout(request):
 	if request.method == "GET":

@@ -29,3 +29,8 @@
 #store_name			{ text-align: center; border-bottom: 1px solid;}
 .item_table 		{ text-align: center;}
 .store_choice_button{ padding: 4px; border-radius: 6px;}
+
+/* cart */
+#recommendations {
+	margin-top: 75px;
+}
