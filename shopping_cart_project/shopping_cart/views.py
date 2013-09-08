@@ -126,5 +126,5 @@ def checkout(request):
 
 
 def previous_orders(request):
-	p_orders = Order.objects.all().filter(buyer=request.user).reverse()
+	p_orders = Order.objects.all().filter(buyer=request.user).order_by('date_ordered').reverse()
 	return render(request, "shopping_cart/previous_orders.html", {'p_orders':p_orders})
