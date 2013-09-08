@@ -5,4 +5,31 @@
 <h1><a href="{% url 'previous_orders' %}">View Past Orders</a></h1>
 <h1><a href="{% url 'home' %}"> Check out our great stores!</a></h1>
 
+<div id='recommendations'>
+  {% if recommendations.any %}
+  <h1>Recommended for you:</h1>
+  {% endif %}
+  {% for i in recommendations %}
+  <h3>{{ i.name }}</h3>
+  <table class="item_table">
+  <tr>
+    <th>Description</th><th>Price</th><th>In Stock?</th>
+  </tr>
+  <tr>
+  	<td align="left">{{ i.description }}</td><td>${{ i.price|floatformat:2 }}</td><td> {{ i.in_stock|yesno:"Yes, Out Of stock" }}</td>
+  	<td>
+  		<form method='POST' action='{% url "inline_add_to_cart" %}'>
+  			{% csrf_token %}
+  			<input type="hidden" value='{{ i.id }}' name='item_id'>
+  			<input type="hidden" value='{{ i.name }}' name='item_name'>
+  			<input type="hidden" value='{{ i.price }}' name='item_price'>
+  			<input type="number" name="quantity" min="1" max="{{ i.quantity }}">
+  			<input type='submit' value='Buy Now!' class='buy_button'>
+  		</form>
+  	</td>
+  </tr>
+  </table>
+  {% endfor %}
+  <div>
+
 {% endblock %}
