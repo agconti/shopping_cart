@@ -4,10 +4,10 @@
 <h3>Order on {{ o.date_ordered }}</h3>
 <table id="cart_table">
 	<tr>
-		<th>Items In Order</th>
+		<th align="left">Items In Order</th>
 	</tr>
 	<tr>
-		<th>Item</th><th>Price</th><th>Quantity</th>
+		<th align="left">Item</th><th>Price</th><th>Quantity</th>
 	</tr>	
 	{% for i in o.transaction_set.all %}
 	<tr>

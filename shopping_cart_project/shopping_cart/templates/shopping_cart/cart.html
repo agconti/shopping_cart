@@ -8,15 +8,20 @@
   		<th>Items In Cart </th><a href="{% url 'previous_orders' %}">View Past Orders</a>
   	</tr>
   	<tr>
-  		<th>Item</th><th>Price</th><th>Quantity</th>
+  		<th align="left">Item</th><th>Price</th><th>Quantity</th><th>Shipping</th>
   	</tr>
   	{% for i in cart_items %}
   	<tr>
-  		<td align="left">{{ i.name }}</td><td>${{ i.price|floatformat:2 }}</td><td> {{ i.quantity }}</td>
+  		<td align="left">{{ i.name }}</td><td>{{ i.price|floatformat:2 }}</td><td align='center'>{{ i.quantity }}</td><td align='center'>{{ i.shipping }}</td>
   	</tr>
   	{% endfor %}
+    <tr>
+      <td>
+        <form action="{% url 'checkout' %}"><input type="submit" value="Check Out"></form>
+      </td>
+    </tr>
   </table>
-  <a href="{% url 'checkout' %}">Checkout?</a>
+  
 </div>
 <div id='recommendations'>
   {% if recommendations.any %}
@@ -26,7 +31,7 @@
   <h3>{{ i.name }}</h3>
   <table class="item_table">
   <tr>
-    <th>Description</th><th>Price</th><th>In Stock?</th>
+    <th align="left">Description</th><th>Price</th><th>In Stock?</th><th>Quantity</th><th>Shipping</th>
   </tr>
   <tr>
   	<td align="left">{{ i.description }}</td><td>${{ i.price|floatformat:2 }}</td><td> {{ i.in_stock|yesno:"Yes, Out Of stock" }}</td>
@@ -36,120 +41,148 @@
   			<input type="hidden" value='{{ i.id }}' name='item_id'>
   			<input type="hidden" value='{{ i.name }}' name='item_name'>
   			<input type="hidden" value='{{ i.price }}' name='item_price'>
-  			<input type="number" name="quantity" min="1" max="{{ i.quantity }}">
+  			<input type="number" name="quantity" min="1" max="{{ i.quantity }}" value='1'>
+    </td>
+    <td>
         <select name='shipping_choices'>
           {% for machine, human in shipping_choices %}
           <option value="{{ machine }}">{{ human }}</option>
           {% endfor %}
         </select>
+    </td>
+    <td>
   			<input type='submit' value='Buy Now!' class='buy_button'>
+    </td>
   		</form>
   	</td>
   </tr>
   </table>
   {% endfor %}
 <script type="text/javascript">
-// from mbstock
-var w = 935,
-    h = 500,
-    p = [20, 50, 30, 20],
-    x = d3.scale.ordinal().rangeRoundBands([0, w - p[1] - p[3]]),
-    y = d3.scale.linear().range([0, h - p[0] - p[2]]),
-    z = d3.scale.ordinal().range(["lightpink", "darkgray", "lightblue"]),
-    scale = 20,
-    bpad = 3 ;   
-    //parse = d3.time.format("%m/%Y").parse,
-    //format = d3.time.format("%b");
-var data = [1,2,3,4,5,5,20,2];
+var w = 700,
+    h = 150,
+    data = {{ data }},
+    data_names = ['Items', 'S & H', 'Tax'],
+    p = [0.05, 5, .5, 20, 35,45],
+    x, 
+    y;   
+
+// set up x and y scales
+x = d3.scale.linear()
+   .domain([0, 1])
+   .range([0, w]);
+
+y = d3.scale.ordinal()
+   .domain(data)
+   .rangeBands([0, h],p[0],p[2]);
+
+var colorscale = d3.scale.linear()
+  .domain([d3.min(data), d3.max(data)])
+  .interpolate(d3.interpolateHcl)
+  .range(["#59E294", "#214592"]);
 
 var svg = d3.select("#cart")
             .insert("svg", 'div')
             .attr({
               height: h,
-              width: w
+              width: w,
+              class: 'chart'
             });
-
-// var data = [
-//   {'item_id': u'4', 'price': u'10.5', 'name': u'Eye Patch', 'quantity': u'1'}, 
-//   {'item_id': u'1', 'price': u'10000', 'name': u'Time', 'quantity': u'1'}, 
-//   {'item_id': u'7', 'price': u'800', 'name': u'Fender Strat', 'quantity': u'1'}, 
-//   {'item_id': u'7', 'price': u'800', 'name': u'Fender Strat', 'quantity': u'1'}
-// ];
-
 
 var rects = svg.selectAll('rects')
                 .data(data);
 
- 
-rects.enter()
-  .append('rect')
-  .attr({
-      width: function(d){ return ((w / data.length) - bpad);},
-      height: function(d){return d * scale;},
-      y: function(d){return (h - (d * scale));},
-      x: function(d,i){return (i * (w / data.length));},
+var previous_d = false;
+rects.enter().append('rect')
+    .attr({
+      width: x,
+      height: h / 2,
+      y: h / 2,
+      x: function(d){
+        if(previous_d){
+          val = previous_d;
+          previous_d += x(d);
+          console.log(previous_d);
+          return val + p[1];
+
+        }
+        else{
+          previous_d = x(d);
+          console.log(previous_d);
+          return 0 + p[1];
+        }
+      },
       fill: function(d){return colorscale(d);}
   });
+// .attr({
+//       width: x,
+//       height: y.rangeBand(),
+//       y: y,
+//       x: p[1],
+//       fill: function(d){return colorscale(d);}
+//   });
 
-// mbsotkkk
-// d3.csv("crimea.csv", function(crimea) {
+// add lables
+previous_d = false;
+svg.selectAll("text")
+     .data(data)
+   .enter().append("text")
+      .attr({
+      height: h / 2,
+      y: (h / 2) + p[4],
+      x: function(d){
+        if(previous_d){
+          val = previous_d;
+          previous_d += x(d);
+          return val + p[1];
 
-//   Transpose the data into layers by cause.
-//   var causes = d3.layout.stack()(["wounds", "other", "disease"].map(function(cause) {
-//     return crimea.map(function(d) {
-//       return {x: parse(d.date), y: +d[cause]};
-//    });
-//   //}));
+        }
+        else{
+          previous_d = x(d);
+          console.log(previous_d);
+          return 0 + p[1];
+        }
+      },
+      dx: 10, // padding-right
+      dy: ".35em", // vertical-align: middle
+     "text-anchor": "start", // text-align: left
+     fill: 'white',
+     })
+     .text(function(d,i){return data_names[i];});
 
-//   // Compute the x-domain (by date) and y-domain (by top).
-//   x.domain(causes[0].map(function(d) { return d.x; }));
-//   y.domain([0, d3.max(causes[causes.length - 1], function(d) { return d.y0 + d.y; })]);
-
-//   // Add a group for each cause.
-//   var cause = svg.selectAll("g.cause")
-//       .data(causes)
-//       .enter().append("svg:g")
-//       .attr("class", "cause")
-//       .style("fill", function(d, i) { return z(i); })
-//       .style("stroke", function(d, i) { return d3.rgb(z(i)).darker(); });
-
-//   // Add a rect for each date.
-//   var rect = cause.selectAll("rect")
-//       .data(Object)
-//     .enter().append("svg:rect")
-//       .attr("x", function(d) { return x(d.x); })
-//       .attr("y", function(d) { return -y(d.y0) - y(d.y); })
-//       .attr("height", function(d) { return y(d.y); })
-//       .attr("width", x.rangeBand());
-
-//   // Add a label per date.
-//   var label = svg.selectAll("text")
-//       .data(x.domain())
-//     .enter().append("svg:text")
-//       .attr("x", function(d) { return x(d) + x.rangeBand() / 2; })
-//       .attr("y", 6)
-//       .attr("text-anchor", "middle")
-//       .attr("dy", ".71em")
-//       .text(format);
-
-  // Add y-axis rules.
-//   var rule = svg.selectAll("g.rule")
-//       .data(y.ticks(5))
-//     .enter().append("svg:g")
-//       .attr("class", "rule")
-//       .attr("transform", function(d) { return "translate(0," + -y(d) + ")"; });
-
-//   rule.append("svg:line")
-//       .attr("x2", w - p[1] - p[3])
-//       .style("stroke", function(d) { return d ? "#fff" : "#000"; })
-//       .style("stroke-opacity", function(d) { return d ? .7 : null; });
-
-//   rule.append("svg:text")
-//       .attr("x", w - p[1] - p[3] + 6)
-//       .attr("dy", ".35em")
-//       .text(d3.format(",d"));
-// });
-
+// add g for axis and rules
+var svg = d3.select(".chart")
+     .attr("class", "chart")
+     .attr("width", w + p[3])
+     .attr("height", h + p[3])
+   .insert("g", 'rect')
+     .attr({
+      'transform': 'translate(5,15)'
+    });
+// add x rule
+ svg.selectAll("line")
+     .data(x.ticks(5))
+   .enter().append("line")
+     .attr("x1", x)
+     .attr("x2", x)
+     .attr("y1", 0)
+     .attr("y2", w)
+     .style("stroke", "#ccc");
+ // add x rule text
+ svg.selectAll(".rule")
+     .data(x.ticks(5))
+   .enter().append("text")
+     .attr("class", "rule")
+     .attr("x", x)
+     .attr("y", 0)
+     .attr("dy", -3)
+     .attr("text-anchor", "middle")
+     .text(String);
+// y rule
+ svg.append("line")
+     .attr("y1", 0)
+     .attr("y2", w)
+     .style("stroke", "#000");
 </script>
 </div>
 {% endblock %}

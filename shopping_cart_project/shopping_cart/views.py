@@ -8,6 +8,7 @@ from django.contrib.auth.forms import UserCreationForm
 from django.contrib.auth.models import User, Permission
 
 from shopping_cart.models import Store, Item, Order, Transaction
+from view_functions import add_item, chart_prep
 
 #### Stores ##########
 @login_required
@@ -17,7 +18,7 @@ def home(request):
 
 @login_required
 def store_homepage(request, store_id, ordered=False):
-	#get the store's name from the subdomain or the passed store id. 
+	# get the store's name from the subdomain or the passed store id. 
 	try:
 		s = get_object_or_404(Store, name=request.subdomain) 
 		Items = Item.objects.all().filter(store=s)
@@ -58,36 +59,6 @@ def create_user(request):
 	return render(request, 'shopping_cart/create_user.html', {'form': form})
 
 ### shopping_cart ###
-def add_item(request):
-	item_id = request.POST.get('item_id')
-	name = request.POST.get('item_name')
-	price = request.POST.get('item_price')
-	quantity = request.POST.get('quantity')
-	try:
-		# add an item to the cart if there is a cart
-		request.session['cart'].append({
-			'item_id': item_id, 
-			'quantity': quantity, 
-			'name': name, 
-			'price': price
-			})
-		# This is needed to save the session since 
-		# we are not modifying the session, but 
-		# rather the item in the session dict. 
-		request.session.modified = True
-	except:
-		# create an empty cart
-		request.session['cart'] = []
-		request.session['cart'].append({
-			'item_id': item_id, 
-			'quantity': quantity, 
-			'name': name, 
-			'price': price
-			})
-		request.session.modified = True
-	return item_id
-	
-
 @login_required
 def add_to_cart(request):
 	if request.method == "POST":
@@ -106,10 +77,13 @@ def view_cart(request):
 	recommendations = Transaction.objects.filter(order=Order.objects.filter(buyer=request.user)[0])[0].recommend
 	shipping_choices = Order.shipping_choices
 	if request.session.get('cart', default=None) != None:
+		data = chart_prep(request.session.get('cart'))
+
 		return render(request, "shopping_cart/cart.html", {
 			'cart_items': request.session['cart'], 
 			'recommendations':recommendations,
-			'shipping_choices':shipping_choices
+			'shipping_choices':shipping_choices,
+			'data':data
 			})
 	else:
 		return render(request, "shopping_cart/empty_cart.html", {'recommendations':recommendations, 'shipping_choices':shipping_choices})
@@ -128,8 +102,6 @@ def checkout(request):
 		# empty cart
 		del request.session['cart']
 		return render(request, "shopping_cart/order_processed.html", {'order': o})
-
-
 
 def previous_orders(request):
 	p_orders = Order.objects.all().filter(buyer=request.user).order_by('date_ordered').reverse()
