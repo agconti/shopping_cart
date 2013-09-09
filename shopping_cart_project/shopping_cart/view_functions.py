@@ -38,13 +38,13 @@ def chart_prep(cart):
 	import numpy as np
 	import json
 	shipping = {'ground': 4.35, 'snail': 14.43, 'owl': 5.00, 'teleporter':324.04, 'pony_express':45.28}
-	tax = .35
+	tax = .10
 
 
 	df = pd.DataFrame(cart, dtype=np.float16)
 	# munge data to compute totals and order percentage breakdown 
 	df['shipping_costs'] = df.shipping.apply(lambda x: shipping[x])
-	df['tax'] = ((df.price * df.quantity) * tax)
+	df['tax'] = (((df.price * df.quantity)+ df.shipping_costs ) * tax)
 	df['total_price'] = ((df.price * df.quantity) + df.tax + df.shipping_costs)
 	total = df.total_price.sum()
 	# create an array with break down of item, shipping, and tax costs as a percentage of the order
