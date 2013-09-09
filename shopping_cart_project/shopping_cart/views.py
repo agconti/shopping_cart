@@ -20,6 +20,7 @@ def home(request):
 def store_homepage(request, store_id, ordered=False):
 	# get the store's name from the subdomain or the passed store id. 
 	try:
+		#s = get_object_or_404(Store, name='Guitar Store')
 		s = get_object_or_404(Store, name=request.subdomain) 
 		Items = Item.objects.all().filter(store=s)
 		
